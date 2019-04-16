@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.nsr.osama.assetmanager.database.EntryModel
+import com.nsr.osama.assetmanager.database.EntryViewModel
 import com.nsr.osama.assetmanager.recycler_view.MyAdapter
 import kotlinx.android.synthetic.main.fragment_main.view.*
 
@@ -14,23 +16,30 @@ class PlaceholderFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.fragment_main, container, false)
-//        rootView.section_label.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
-        rootView.recyclerView.let {
-            val pos = arguments?.getInt(ARG_SECTION_NUMBER)
-            it.adapter = MyAdapter(MainActivity.arrayListData.filter { it2 -> it2.category == pos } as MutableList<EntryModel>)
-            it.layoutManager = LinearLayoutManager(activity)
-            it.setHasFixedSize(true)
+//        rootView.section_label.text = getString(R.string.section_format, arguments?.getInt(PlaceholderFragment.SECTION_POSITION_NUMBER))
+        Toast.makeText(activity, "New Category #(${arguments?.getByte(PlaceholderFragment.SECTION_POSITION_NUMBER).toString()})", Toast.LENGTH_SHORT).show()
+        val recyclerViewAdapter: MyAdapter = MyAdapter(activity?.supportFragmentManager).also {
+            rootView.recyclerView.adapter = it
+            rootView.recyclerView.layoutManager = LinearLayoutManager(activity)
+            rootView.recyclerView.setHasFixedSize(true)
+//            MainActivity.currentAdapter = it
         }
+
+        ViewModelProviders.of(this).get(EntryViewModel::class.java)
+                .entries.observe(this, androidx.lifecycle.Observer {
+            val pos = arguments?.getByte(PlaceholderFragment.SECTION_POSITION_NUMBER)
+            recyclerViewAdapter.submitList(it.filter { it2 -> it2.category == pos })
+        })
         return rootView
     }
 
     companion object {
-        private const val ARG_SECTION_NUMBER = "section_number"
+        private const val SECTION_POSITION_NUMBER = "section_number"
 
-        fun newInstance(sectionNumber: Int): PlaceholderFragment =
+        fun newInstance(sectionNumber: Byte): PlaceholderFragment =
                 PlaceholderFragment().also {
-                    it.arguments = Bundle().also { it2 ->
-                        it2.putInt(ARG_SECTION_NUMBER, sectionNumber)
+                    it.arguments = Bundle().apply {
+                        putByte(SECTION_POSITION_NUMBER, sectionNumber)
                     }
                 }
     }

@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 
 class EntryViewModel(application: Application) : AndroidViewModel(application) {
     private val entryRepository = EntryRepository(application)
-    val entries: LiveData<ArrayList<EntryModel>> = entryRepository.entries
+    val entries: LiveData<List<EntryModel>> = entryRepository.entries
 
     fun insert(entryModel: EntryModel) = entryRepository.insert(entryModel)
 

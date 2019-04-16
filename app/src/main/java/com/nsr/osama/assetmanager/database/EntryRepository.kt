@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 
 class EntryRepository(app: Application) {
     private val entryDao: EntryDao = EntryDB.getInstance(app).entryDao()
-    val entries: LiveData<ArrayList<EntryModel>> = entryDao.query()
+    val entries: LiveData<List<EntryModel>> = entryDao.query()
 
     fun insert(entryModel: EntryModel) = EntryAsyncTask(entryDao).execute(Pair('i', entryModel))!!
 

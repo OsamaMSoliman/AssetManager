@@ -51,12 +51,14 @@
             android:id="@+id/editImgBtn"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:tint="#CC00F0F0"
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <ImageButton
             android:id="@+id/deleteImgBtn"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:tint="#CCF04040"
             app:srcCompat="@android:drawable/ic_menu_delete" />
 
     </LinearLayout>

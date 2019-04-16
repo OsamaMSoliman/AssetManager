@@ -9,8 +9,11 @@ import androidx.fragment.app.FragmentPagerAdapter
  * one of the sections/tabs/pages.
  */
 class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+
+//    var currentPos: Int = 0
+
     // getItem is called to instantiate the fragment for the given page.
-    override fun getItem(position: Int): Fragment = PlaceholderFragment.newInstance(position)
+    override fun getItem(position: Int): Fragment = PlaceholderFragment.newInstance(position.toByte())/*.also { currentPos = position }*/
 
     override fun getCount(): Int = MainActivity.categoryCount
 }

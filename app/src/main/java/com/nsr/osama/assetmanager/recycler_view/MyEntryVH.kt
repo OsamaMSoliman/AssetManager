@@ -9,12 +9,12 @@ import kotlinx.android.synthetic.main.entry.view.*
 
 class MyEntryVH(itemView: View, listener: PlaceHolderInterface) : RecyclerView.ViewHolder(itemView) {
 
-    val idTextView: TextView = itemView.idTextView
+    val positionTextView: TextView = itemView.idTextView
     val signImageView: ImageView = itemView.signImageView
     val moneyTextView: TextView = itemView.moneyTextView
     val quantityTextView: TextView = itemView.quantityTextView
-    private val editImgBtn: ImageButton = itemView.editImgBtn
-    private val deleteImgBtn: ImageButton = itemView.deleteImgBtn
+    val editImgBtn: ImageButton = itemView.editImgBtn
+    val deleteImgBtn: ImageButton = itemView.deleteImgBtn
 
     init {
         itemView.setOnClickListener {

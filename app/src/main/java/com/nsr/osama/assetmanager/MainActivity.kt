@@ -4,28 +4,18 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
-import com.nsr.osama.assetmanager.database.EntryModel
+import com.nsr.osama.assetmanager.database.EntryViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        var arrayListData = ArrayList<EntryModel>().apply {
-            add(EntryModel(Date(), 0.0, "0"))
-            add(EntryModel(Date(), 1.0, "1"))
-            add(EntryModel(Date(), 2.0, "2"))
-            add(EntryModel(Date(), 3.0, "3"))
-            add(EntryModel(Date(), 3.0, "3", quantity = 3, category = 1))
-            add(EntryModel(Date(), 20.5, "20.5", quantity = 2, category = 1))
-            add(EntryModel(Date(), 75.0, "75", quantity = 1, category = 1))
-            add(EntryModel(Date(), 3.0, "3", quantity = 20, category = 1))
-            add(EntryModel(Date(), 8.0, "8", quantity = 5, category = 1))
-            add(EntryModel(Date(), 10.0, "10", quantity = 2, category = 1))
-        }
-        var categoryCount = 2
+        var categoryCount = 1
+        lateinit var entryViewModel: EntryViewModel
+//        lateinit var currentAdapter: MyAdapter
     }
 
     /**
@@ -53,16 +43,15 @@ class MainActivity : AppCompatActivity() {
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
 
         fab.setOnClickListener {
-            //            Snackbar.make(it, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show()
-            AddEntryBSDF().show(supportFragmentManager, "TAG_fragment_add_entry_bottom_sheet")
+            EntryBSDF.newInstance(EntryBSDF.OperationType.Insert).show(supportFragmentManager)
         }
 
-//        val entryViewModel = ViewModelProviders.of(this).get(EntryViewModel::class.java)
-//        entryViewModel.entries.observe(this, androidx.lifecycle.Observer {
-//            MainActivity.arrayListData = it
-//        })
 
+        MainActivity.entryViewModel = ViewModelProviders.of(this).get(EntryViewModel::class.java)
+//        MainActivity.entryViewModel.entries.observe(this, Observer {
+//            // my not be initialized yet
+//            MainActivity.currentAdapter?.submitList(it.filter { it2 -> it2.category == mSectionsPagerAdapter.currentPos })
+//        })
     }
 
 

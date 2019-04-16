@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="2dp"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp">
+        <shape android:shape="oval">
+            <solid android:color="#eeeeeeee" />
+        </shape>
+    </item>
+    <item
+        android:bottom="5dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="5dp">
+        <selector xmlns:android="http://schemas.android.com/apk/res/android">
+            <item
+                android:color="@color/colorPrimary"
+                android:drawable="@android:drawable/arrow_up_float"
+                android:state_checked="true" />
+            <item
+                android:color="@color/colorAccent"
+                android:drawable="@android:drawable/arrow_down_float"
+                android:state_checked="false" />
+        </selector>
+    </item>
+</layer-list>
