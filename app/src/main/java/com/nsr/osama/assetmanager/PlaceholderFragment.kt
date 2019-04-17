@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +16,7 @@ class PlaceholderFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView = inflater.inflate(R.layout.fragment_main, container, false)
 //        rootView.section_label.text = getString(R.string.section_format, arguments?.getInt(PlaceholderFragment.SECTION_POSITION_NUMBER))
-        Toast.makeText(activity, "New Category #(${arguments?.getByte(PlaceholderFragment.SECTION_POSITION_NUMBER).toString()})", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(activity, "New Category #(${arguments?.getByte(PlaceholderFragment.SECTION_POSITION_NUMBER).toString()})", Toast.LENGTH_SHORT).show()
         val recyclerViewAdapter: MyAdapter = MyAdapter(activity?.supportFragmentManager).also {
             rootView.recyclerView.adapter = it
             rootView.recyclerView.layoutManager = LinearLayoutManager(activity)

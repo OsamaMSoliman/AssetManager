@@ -61,6 +61,6 @@ class MyAdapter(private val fm: FragmentManager?) : ListAdapter<EntryModel, Recy
             if (position == subEntry.currentPosition) R.layout.entry_details else R.layout.entry
 
     private fun edit_delete(v: MyEntryVH, opType: EntryBSDF.OperationType) = fm?.let {
-        EntryBSDF.newInstance(opType, getItem(v.positionTextView.text.toString().toInt())).show(fm)
+        EntryBSDF.newInstance(opType, getItem(v.positionTextView.text.toString().toInt()).toBundle()).show(fm)
     }
 }

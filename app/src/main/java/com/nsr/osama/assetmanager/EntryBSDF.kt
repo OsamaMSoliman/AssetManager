@@ -1,6 +1,7 @@
 package com.nsr.osama.assetmanager
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,8 @@ import java.util.*
 
 class EntryBSDF : BottomSheetDialogFragment() {
 
+    private lateinit var aftermath: () -> Unit
+
     enum class OperationType(val value: Byte) {
         Insert(0), Update(1), Delete(2)
     }
@@ -23,11 +26,12 @@ class EntryBSDF : BottomSheetDialogFragment() {
     companion object {
         private const val OPERATION_TYPE = "OPERATION_TYPE"
 
-        fun newInstance(operationType: OperationType, entryModel: EntryModel? = null): EntryBSDF =
+        fun newInstance(operationType: OperationType, entryModelBundle: Bundle? = null, aftermath: () -> Unit = { Log.d(">>S", "Suck it") }): EntryBSDF =
                 EntryBSDF().also {
+                    it.aftermath = aftermath
                     it.arguments = Bundle().apply {
                         putByte(OPERATION_TYPE, operationType.value)
-                        entryModel?.run { putAll(entryModel.toBundle()) }
+                        entryModelBundle?.let { putAll(entryModelBundle) }
                     }
                 }
     }
@@ -35,7 +39,7 @@ class EntryBSDF : BottomSheetDialogFragment() {
     // as an override for no reason than to hide the TAG ;p
     fun show(manager: FragmentManager) = show(manager, "TAG_fragment_add_entry_bottom_sheet")
 
-    fun Bundle.toEntryModel() = EntryModel(
+    private fun Bundle.toEntryModel() = EntryModel(
             getInt("id"),
             MyRoomConverters.fromTimestamp(getLong("time"))!!,
             getDouble("price"),
@@ -51,6 +55,7 @@ class EntryBSDF : BottomSheetDialogFragment() {
                 dismiss()
                 showSnackBar("Deleted!")
                 null
+                //TODO: update list adaptor , all beneath the delete entry
             } else inflater.inflate(R.layout.fragment_add_entry_bottom_sheet, container, false).apply {
                 numberPicker.minValue = 1
                 numberPicker.maxValue = 99
@@ -70,24 +75,24 @@ class EntryBSDF : BottomSheetDialogFragment() {
         val quantity = numberPicker.value
         val isIncrease = toggleButton.isChecked
         val time = MyRoomConverters.fromTimestamp(arguments?.getLong("time")) ?: Date()
-        //TODO: val category
         if (price.trim().isEmpty() || description.trim().isEmpty()) {
             Toast.makeText(activity, "Empty Price / Description!", Toast.LENGTH_SHORT).show()
         } else {
-            val entryModel = EntryModel(arguments?.getInt("id"), time, price.toDouble(), description, quantity,
-                    arguments?.getByte("category") ?: 0, isIncrease)
-            //TODO: later category will be sent with the Insert request as well as the Update and can't be null
-//                    arguments?.getByte("category")!!, isIncrease)
+            val id: Int? = arguments?.getInt("id").let { return@let if (it == 0) null else it }
+            val entryModel = EntryModel(id, time, price.toDouble(), description, quantity,
+                    arguments?.getByte("category")!!, isIncrease)
             val actionType: String =
                     when (arguments?.getByte(EntryBSDF.OPERATION_TYPE)) {
                         OperationType.Insert.value -> {
                             MainActivity.entryViewModel.insert(entryModel)
+                            if (arguments?.getBoolean("isNewCategory") == true) this.aftermath()
                             "Inserted"
                         }
                         OperationType.Update.value -> {
                             //get the entry by id, keep it the same along with the Date, category
                             MainActivity.entryViewModel.update(entryModel)
                             "Updated"
+                            //TODO: update list adaptor , detailsEntry
                         }
                         else -> "Internal Error! Undefined operation code ${arguments?.getByte(EntryBSDF.OPERATION_TYPE)}"
                     }
