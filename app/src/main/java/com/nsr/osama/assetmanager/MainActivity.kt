@@ -1,15 +1,19 @@
 package com.nsr.osama.assetmanager
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.github.mikephil.charting.animation.Easing
 import com.google.android.material.tabs.TabLayout
 import com.nsr.osama.assetmanager.database.EntryModel
 import com.nsr.osama.assetmanager.database.EntryViewModel
+import com.nsr.osama.assetmanager.pie_chart.PieChartInterface
+import com.nsr.osama.assetmanager.pie_chart.PieChartListener
 import com.nsr.osama.assetmanager.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -19,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         var categoryCount: Byte = 1
         lateinit var entryViewModel: EntryViewModel
-//        lateinit var currentAdapter: MyAdapter
+        lateinit var PieChart: PieChartInterface
     }
 
 
@@ -31,11 +35,26 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
+        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
+
+        pieChart.apply {
+            description.isEnabled = false
+            isDrawHoleEnabled = true
+            setHoleColor(Color.WHITE)
+            extraBottomOffset = -200f
+            maxAngle = 180f
+            rotationAngle = 180f
+            isRotationEnabled = false
+            scaleY = 0.85f
+        }
+        MainActivity.PieChart = PieChartListener(pieChart, collapsingToolbarLayout)
+
         MainActivity.entryViewModel = ViewModelProviders.of(this).get(EntryViewModel::class.java)
         MainActivity.entryViewModel.entries.observe(this, object : Observer<List<EntryModel>> {
-            override fun onChanged(it: List<EntryModel>) {
+            override fun onChanged(_list: List<EntryModel>) {
                 MainActivity.entryViewModel.entries.removeObserver(this)
-                categoryCount = entryViewModel.entries.value?.maxBy { it.category }?.category?.inc() ?: 5
+                categoryCount = entryViewModel.entries.value?.maxBy { it.category }?.category?.inc() ?: 1
 
                 // Create the adapter that will return a fragment for each of the sections of the activity.
                 sectionPagerAdapter = SectionsPagerAdapter(supportFragmentManager).also {
@@ -47,13 +66,10 @@ class MainActivity : AppCompatActivity() {
                 for (i in 1 until categoryCount) {
                     tabs.addTab(tabs.newTab().setText(i.toString()))
                 }
+                MainActivity.PieChart.updatePieChart(_list.filter { it.category == 0.toByte() },true)
             }
-            // my not be initialized yet
-//            MainActivity.currentAdapter?.submitList(it.filter { it2 -> it2.category == mSectionsPagerAdapter.currentPos })
         })
 
-        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
-        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
 
         fab.setOnClickListener {
             EntryBSDF.newInstance(EntryBSDF.OperationType.Insert, Bundle().apply {

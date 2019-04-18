@@ -27,5 +27,10 @@ class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm), View
 
     override fun onPageSelected(position: Int) {
         currentPos = position
+        MainActivity.entryViewModel.entries.value?.filter {
+            it.category == position.toByte()
+        }?.also {
+            MainActivity.PieChart.updatePieChart(it,true)
+        }
     }
 }

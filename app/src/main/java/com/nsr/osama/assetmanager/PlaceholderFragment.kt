@@ -24,10 +24,17 @@ class PlaceholderFragment : Fragment() {
 //            MainActivity.currentAdapter = it
         }
 
+        var skip = true
         ViewModelProviders.of(this).get(EntryViewModel::class.java)
                 .entries.observe(this, androidx.lifecycle.Observer {
             val pos = arguments?.getByte(PlaceholderFragment.SECTION_POSITION_NUMBER)
-            recyclerViewAdapter.submitList(it.filter { it2 -> it2.category == pos })
+            val filteredList = it.filter { it2 -> it2.category == pos }
+            recyclerViewAdapter.submitList(filteredList)
+            if (skip) {
+                skip = false
+                return@Observer
+            }
+            MainActivity.PieChart.updatePieChart(filteredList, false)
         })
         return rootView
     }

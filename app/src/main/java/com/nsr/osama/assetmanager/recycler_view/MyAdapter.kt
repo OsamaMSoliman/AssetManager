@@ -1,6 +1,7 @@
 package com.nsr.osama.assetmanager.recycler_view
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
@@ -39,7 +40,9 @@ class MyAdapter(private val fm: FragmentManager?) : ListAdapter<EntryModel, Recy
         when (holder) {
             is MyEntryVH -> {
                 holder.ToggleBtns(subEntry.currentPosition != -1 && position == subEntry.currentPosition - 1)
-                val newPos = if (subEntry.currentPosition != -1 && position > subEntry.currentPosition) position - 1 else position
+                Log.d(position.toString(), subEntry.currentPosition.toString() + " $itemCount")
+                val newPos = if (subEntry.currentPosition != -1 &&( position > subEntry.currentPosition
+                                || position == itemCount-1)) position - 1 else position
                 holder.positionTextView.text = newPos.toString()
                 holder.moneyTextView.text = getItem(newPos).price.toString()
                 holder.signImageView.setImageResource(if (getItem(newPos).isIncrease) android.R.drawable.arrow_up_float else android.R.drawable.arrow_down_float)
